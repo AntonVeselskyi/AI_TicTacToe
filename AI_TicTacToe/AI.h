@@ -20,7 +20,7 @@ protected:
 	bool TryToPutMark(int x, int y);
 
 	virtual bool CanWinNow(); //check if AI can win by puting ONE LAST MARK
-	virtual bool CheckOpponentMarks() = 0; //check if we need to interrupt
+	virtual bool CheckOpponentMarks(); //check if we need to interrupt
 	virtual void MakeMyMark() = 0;
 	virtual void MakeFirstMark() = 0;
 

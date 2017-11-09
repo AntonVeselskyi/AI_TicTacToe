@@ -10,7 +10,6 @@ public:
 
 private:
 	//virtual bool CanWinNow() { return false; } //this AI level just put random located marks
-	virtual bool CheckOpponentMarks();
 	virtual void MakeMyMark();
 	virtual void MakeFirstMark();
 };
