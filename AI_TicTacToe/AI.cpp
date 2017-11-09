@@ -52,9 +52,9 @@ bool AI::CanWinNow()
 						if (isCellInbound(second_cell_x, second_cell_y))
 							if (_field[second_cell_x][second_cell_y] == CROSS) 
 							{												  
-								//if it`s true, we have too				|x|_|_|	|x|_|_|
-								//check next cell in a row after them	|x|_|_|	|_|X|_|
-								//										|_|_|_|	|_|_|_|
+								//if it`s true, we have too             |x|_|_|	|x|_|_|
+								//check next cell in a row after them   |x|_|_|	|_|X|_|
+								//                                      |_|_|_|	|_|_|_|
 
 								//first we find a offset vector
 								int offset_x = second_cell_x - i,
@@ -67,9 +67,9 @@ bool AI::CanWinNow()
 							}
 							else if (_field[second_cell_x][second_cell_y] != ZERO) 														
 							{
-								//if the cell near current exist,		 	|x|_|_|	|x|_|_| 
-								//but it`s empty and not filled by player,	|_|_|_|	|_|_|_|
-								//there can be situation like this:			|x|_|_|	|_|_|x|
+								//if the cell near current exist,           |x|_|_|	|x|_|_| 
+								//but it`s empty and not filled by player,  |_|_|_|	|_|_|_|
+								//there can be situation like this:         |x|_|_|	|_|_|x|
 
 								//first we find a offset vector
 								int offset_x = second_cell_x - i,
@@ -109,9 +109,9 @@ bool AI::CheckOpponentMarks()
 						if (isCellInbound(second_cell_x, second_cell_y))
 							if (_field[second_cell_x][second_cell_y] == ZERO)
 							{
-								//if it`s true, we have too				|x|_|_|	|x|_|_|
-								//check next cell in a row after them	|x|_|_|	|_|X|_|
-								//										|_|_|_|	|_|_|_|	
+								//if it`s true, we have too             |x|_|_|	|x|_|_|
+								//check next cell in a row after them   |x|_|_|	|_|X|_|
+								//                                      |_|_|_|	|_|_|_|	
 
 								//first we find a offset vector
 								int offset_x = second_cell_x - i,
@@ -125,9 +125,9 @@ bool AI::CheckOpponentMarks()
 							}
 							else if (_field[second_cell_x][second_cell_y] != CROSS)
 							{
-								//if the cell near current exist,		|x|_|_|	|x|_|_|
-								//but it`s empty and not filled by AI,	|_|_|_|	|_|_|_|
-								//there can be situation like this:		|x|_|_|	|_|_|x|
+								//if the cell near current exist,       |x|_|_|	|x|_|_|
+								//but it`s empty and not filled by AI,  |_|_|_|	|_|_|_|
+								//there can be situation like this:     |x|_|_|	|_|_|x|
 
 								//first we find a offset vector
 								int offset_x = second_cell_x - i,

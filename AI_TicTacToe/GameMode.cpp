@@ -86,9 +86,9 @@ int isGameEnded(int **field) //return value: NULL -game still on, CROSS - AI won
 						if (AI::isCellInbound(second_cell_x, second_cell_y))
 							if (field[second_cell_x][second_cell_y] == field_mark) 
 							{												 
-								//if it`s true, we have too				|x|_|_|	|x|_|_|
-								//check next cell in a row after them	|x|_|_|	|_|X|_|
-								//										|_|_|_|	|_|_|_|	
+								//if it`s true, we have too	            |x|_|_| |x|_|_|
+								//check next cell in a row after them   |x|_|_| |_|X|_|
+								//                                      |_|_|_| |_|_|_|	
 
 								//first we find a offset vector
 								int offset_x = second_cell_x - i,
