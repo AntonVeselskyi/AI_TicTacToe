@@ -1,28 +1,31 @@
 #pragma once
 
-#define FIELD_SIDE 3
-#define CROSS	2 //AI mark
-#define ZERO	1 //Player mark
+#include <vector>
+#define FIELD_SIDE (3)
+#define AI_MARK	(2) //AI mark
+#define PLAYER_MARK	(1) //Player mark
+typedef std::vector<std::vector<int> > Field;
+
+//AI --- will put an array with '2', when player will use '1'
 class AI
 {
 public:
-	AI(int **field);
-	virtual ~AI();
+	AI(Field &field);
+	virtual ~AI() = default;
 	virtual void MakeATurn() = 0;
-	static bool isCellInbound(int x, int y); //is Cell (x,y) belongs to field
+	static bool IsCellInbound(int x, int y); //is Cell (x,y) belongs to field
 protected:
-	int **_field; //3x3 array
+	Field &_field; //3x3 array
 	int _turns_num = 0; //for now if it`s first turn (and for statistics)
 	int _last_mark_x = 0; //last mark is needed for AI to know were to continue 
 	int _last_mark_y = 0;
 
-	void PutMark(int x, int y); //write '0' somewhere in array
-	bool TryToPutMark(int x, int y);
+	bool TryToPutMark(int x, int y);//try to write AI_MARK in (X,Y) position in array
 
-	virtual bool CanWinNow(); //check if AI can win by puting ONE LAST MARK
-	virtual bool CheckOpponentMarks(); //check if we need to interrupt
+	virtual bool TryToWinNow(); 
+	virtual bool TryToInterruptOpponent();
 	virtual void MakeMyMark() = 0;
 	virtual void MakeFirstMark() = 0;
 
-}; //AI --- will put an array with '2', when player will use '1'
+};
 

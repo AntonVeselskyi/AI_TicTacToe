@@ -5,11 +5,10 @@
 class AI_Lvl1 : public AI
 {
 public:
-	AI_Lvl1(int **field);
-	virtual void MakeATurn();
+	explicit AI_Lvl1(Field &field);
+	virtual void MakeATurn() override;
 
 private:
-	//virtual bool CanWinNow() { return false; } //this AI level just put random located marks
-	virtual void MakeMyMark();
-	virtual void MakeFirstMark();
+	virtual void MakeMyMark() override;
+	virtual void MakeFirstMark() override {}
 };

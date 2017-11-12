@@ -9,31 +9,75 @@
 #define NUM_2 2,1
 #define NUM_3 2,2
 
+#define GAME_ENDED (1)
+#define GAME_CONTINUE (0)
+
 #include <iostream>
 #include <Windows.h>
 #include <cstdlib>
 #include <ctime>
 #include "AI_Levels.h"
-using namespace std;
 
-int Player_Turn(int **field, char input, bool show_filed = true);
+//declaration Player_Turn needed, because there is scenario 
+//when PutPlayerMark() calls Player_Turn() and vice versa.
+int Player_Turn(Field &field, char input, bool show_filed = true);
 
-void PutPlayerMark(int **field, int x, int y)
+void PutPlayerMark(Field &field, int x, int y)
 {
-	if (!field[x][y])
-		field[x][y] = ZERO;
+	if (AI::IsCellInbound(x,y) && field[x][y] == 0)
+		field[x][y] = PLAYER_MARK;
 	else
 	{
 		char input;
-		cout << "WRONG INPUT, TRY AGAIN \n";
-		cin >> input;
+		std::cout << "WRONG INPUT, TRY AGAIN \n";
+		std::cin >> input;
 		Player_Turn(field, input, false);
 	}
 }
 
-bool DrawField(int **field) //draws field to console, return "true" if there no free space on a field
+void ImplementPlayerInput(char input, Field &field)
 {
-	bool no_free_cells = true;
+	switch (input)
+	{
+	case 'z':
+		PutPlayerMark(field, NUM_1);
+		break;
+	case 'x':
+		PutPlayerMark(field, NUM_2);
+		break;
+	case 'c':
+		PutPlayerMark(field, NUM_3);
+		break;
+	case 'a':
+		PutPlayerMark(field, NUM_4);
+		break;
+	case 's':
+		PutPlayerMark(field, NUM_5);
+		break;
+	case 'd':
+		PutPlayerMark(field, NUM_6);
+		break;
+	case 'q':
+		PutPlayerMark(field, NUM_7);
+		break;
+	case 'w':
+		PutPlayerMark(field, NUM_8);
+		break;
+	case 'e':
+		PutPlayerMark(field, NUM_9);
+		break;
+	default:
+		char input;
+		std::cout << "WRONG INPUT, TRY AGAIN \n";
+		std::cin >> input;
+		Player_Turn(field, input, false);
+		break;
+	}
+}
+
+bool DrawField(const Field &field) //draws field to console, return "false" if there no free space on a field
+{
+	bool free_cells_exist = false;
 	int one_time = 1;
 	char ch = 'h';
 	for (int i = 0; i < FIELD_SIDE; ++i)
@@ -42,60 +86,59 @@ bool DrawField(int **field) //draws field to console, return "true" if there no 
 		{
 			switch (field[i][j])
 			{
-			case CROSS:
+			case AI_MARK:
 				ch = 'X';
 				break;
-			case ZERO:
+			case PLAYER_MARK:
 				ch = 'O';
 				break;
 			case NULL:
 				ch = '_';
 				if (one_time--)
-					no_free_cells = false;
+					free_cells_exist = true;
 				break;
 			default:
-				cout << "ARRAY IS DAMAGED!!\n";
+				std::cout << "ARRAY IS DAMAGED!!\n";
 			}
-			cout << " | " << ch << " | ";
+			std::cout << " | " << ch << " | ";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
-	cout << endl;
-	return no_free_cells;
+	std::cout << std::endl;
+	return free_cells_exist;
 }
 
-int isGameEnded(int **field) //return value: NULL -game still on, CROSS - AI won, ZERO - player won
+int IsGameEnded(const Field &field) //return value: NULL - game still on, AI_MARK - AI won, PLAYER_MARK - player won
 {
 	int field_mark;
 	for (int i = 0; i < FIELD_SIDE; ++i)
 	{
 		for (int j = 0; j < FIELD_SIDE; ++j)
-			if (field[i][j] != NULL) //CROSS is AI symbol
+			if (field[i][j] != NULL) //AI_MARK is AI symbol
 			{
 				field_mark = field[i][j];
 				//here we check all cells (around)near current
-				for (int a = -1; a <= 1; ++a)
-					for (int b = -1; b <= 1; ++b)
+				for (int iterator_x = -1; iterator_x <= 1; ++iterator_x)
+					for (int iterator_y = -1; iterator_y <= 1; ++iterator_y)
 					{
-						if (!a && !b) //if it`s current cell
+						if (!iterator_x && !iterator_y) //if it`s current cell
 							continue;
 						//here we specify the position of sell near [i][j] cell
-						int second_cell_x = i + a,
-							second_cell_y = j + b;
-						//next I check is cell I`m looking at out of bounds
-						if (AI::isCellInbound(second_cell_x, second_cell_y))
+						int second_cell_x = i + iterator_x;
+						int second_cell_y = j + iterator_y;
+
+						if (AI::IsCellInbound(second_cell_x, second_cell_y))
 							if (field[second_cell_x][second_cell_y] == field_mark) 
 							{												 
-								//if it`s true, we have too	            |x|_|_| |x|_|_|
-								//check next cell in a row after them   |x|_|_| |_|X|_|
-								//                                      |_|_|_| |_|_|_|	
+								//if it`s true, we have too
+								//check next cell in a row after them
 
 								//first we find a offset vector
-								int offset_x = second_cell_x - i,
-									offset_y = second_cell_y - j;
+								int offset_x = second_cell_x - i;
+								int offset_y = second_cell_y - j;
 
 								//check is cell after second_cell is free, if free --> put our mark there 
-								if (AI::isCellInbound(second_cell_x + offset_x, second_cell_y + offset_y))
+								if (AI::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y))
 									if (field[second_cell_x + offset_x][second_cell_y + offset_y] == field_mark) //FAME WON
 										return field_mark;
 							}
@@ -105,112 +148,76 @@ int isGameEnded(int **field) //return value: NULL -game still on, CROSS - AI won
 	return NULL;
 }
 
-int AI_Turn(AI_Lvl1 &ai, int **field)
+int AI_Turn(AI_Lvl1 &ai, Field &field)
 {
 	ai.MakeATurn();  
-	if (isGameEnded((int**)field))
+	if (IsGameEnded(field))
 	{
-		cout << "\n !!! AI WON !!! \n";
-		DrawField((int**)field);
-		return 1;//end
+		std::cout << "\n !!! AI WON !!! \n";
+		DrawField(field);
+		return GAME_ENDED;
 	}
-	if (DrawField((int**)field))
+	if (!DrawField(field))
 	{
-		cout << "\n !!! NO SPACE LEFT --- DRAW!!! \n";
-		return 1;//end
+		std::cout << "\n !!! NO SPACE LEFT --- DRAW!!! \n";
+		return GAME_ENDED;
 	}
-	return 0;
+	return GAME_CONTINUE;
 }
 
-int Player_Turn(int **field, char input, bool show_field)
+int Player_Turn(Field &field, char input, bool show_field)
 {
-	switch (input)
+	ImplementPlayerInput(input, field);
+
+	if (IsGameEnded(field))
 	{
-	case 'z':
-		PutPlayerMark((int**)field, NUM_1);
-		break;
-	case 'x':
-		PutPlayerMark((int**)field, NUM_2);
-		break;
-	case 'c':
-		PutPlayerMark((int**)field, NUM_3);
-		break;
-	case 'a':
-		PutPlayerMark((int**)field, NUM_4);
-		break;
-	case 's':
-		PutPlayerMark((int**)field, NUM_5);
-		break;
-	case 'd':
-		PutPlayerMark((int**)field, NUM_6);
-		break;
-	case 'q':
-		PutPlayerMark((int**)field, NUM_7);
-		break;
-	case 'w':
-		PutPlayerMark((int**)field, NUM_8);
-		break;
-	case 'e':
-		PutPlayerMark((int**)field, NUM_9);
-		break;
-	default:
-		cout << "WRONG INPUT\n";
-		break;
+		std::cout << "\n !!! PLAYER WON !!! \n";
+		DrawField(field);
+		return GAME_ENDED;
 	}
-	if (isGameEnded((int**)field))
+	if (show_field && !DrawField(field))
 	{
-		cout << "\n !!! PLAYER WON !!! \n";
-		DrawField((int**)field);
-		return 1;//end
+		std::cout << "\n !!! NO SPACE LEFT --- DRAW!!! \n";
+		return GAME_ENDED;
 	}
-	if(show_field)
-		if (DrawField((int**)field))
-		{
-			cout << "\n !!! NO SPACE LEFT --- DRAW!!! \n";
-			return 1;//end
-		}
-	return 0;
+	return GAME_CONTINUE;
 }
+
+
 int main()
 {	
 	srand(time(NULL));
-	int **field = new int*[FIELD_SIDE];
-	for (int i = 0; i < FIELD_SIDE; ++i)
-		field[i] = new int[FIELD_SIDE];
-	for (int i = 0; i < FIELD_SIDE; ++i)
-	{
-		for (int j = 0; j < FIELD_SIDE; ++j)
-		{
-			field[i][j] = 0;
-		}
-	}
 
-	AI_Lvl1 ai((int**)field);
+	Field field(3, std::vector<int>(3, 0));
+
+	AI_Lvl1 ai(field);
 	char input;
 	int hows_first = rand() % 2;
 	while (1)
 	{
 		if (hows_first)
 		{
-			if (AI_Turn(ai, field))
+			if (AI_Turn(ai, field) == GAME_ENDED)
 				break;
-			cin >> input;
-			if (Player_Turn(field, input))
+			Sleep(1000);
+			std::cin >> input;
+			if (Player_Turn(field, input) == GAME_ENDED)
 				break;
 		}
 		else
 		{
-			cout << "\n YOUR TURN \n";
-			DrawField((int**)field);
-			cin >> input;
-			if (Player_Turn(field, input))
+			std::cout << "\n YOUR TURN \n";
+			DrawField(field);
+			std::cin >> input;
+			if (Player_Turn(field, input) == GAME_ENDED)
 				break;
-			if (AI_Turn(ai, field))
+			Sleep(1000);
+			if (AI_Turn(ai, field) == GAME_ENDED)
 				break;
 		}
-
-		Sleep(1000);
 	}
-	Sleep(20000);
+	Sleep(10000);
+
+	return 0;
 
 }
