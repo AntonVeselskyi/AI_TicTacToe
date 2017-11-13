@@ -21,12 +21,14 @@ bool AI::TryToPutMark(int x, int y)
 bool AI::IsCellInbound(int x, int y)
 {
 	if ((x <= 2) && (x >= 0) && (y <= 2) && (y >= 0))
+	{
 		return true;
+	}
 
 	return false;
 }
 
-bool AI::TryToWinNow()
+bool AI::TryToWin()
 {
 	for (int i = 0; i < FIELD_SIDE; ++i)
 	{
@@ -35,20 +37,21 @@ bool AI::TryToWinNow()
 			if (_field[i][j] == AI_MARK)
 			{
 				//here we check all cells (around)near current
-				//(iterator_x == 0 && iterator_y == 0) -->it`s current cell
-				for (int iterator_x = -1; iterator_x <= 1; ++iterator_x)
-					for (int iterator_y = -1; iterator_y <= 1; ++iterator_y)
+				//(cell_near_x == 0 && cell_near_y == 0) -->it`s current cell
+				for (int cell_near_x = -1; cell_near_x <= 1; ++cell_near_x)
+					for (int cell_near_y = -1; cell_near_y <= 1; ++cell_near_y)
 					{
-						if (!iterator_x && !iterator_y) //if it`s current cell
+						if (!cell_near_x && !cell_near_y) //if it`s current cell
 							continue;
 						//here we specify the position of sell near [i][j] cell
-						int second_cell_x = i + iterator_x;
-						int second_cell_y = j + iterator_y;
+						int second_cell_x = i + cell_near_x;
+						int second_cell_y = j + cell_near_y;
 						//next I check is cell I`m looking at out of bounds
 						if (IsCellInbound(second_cell_x, second_cell_y))
+						{
 							if (_field[second_cell_x][second_cell_y] == AI_MARK)
 							{
-								//if it`s true, we have too
+								//if it`s true, we have to
 								//check next cell in a row after them 
 
 								//first we find a offset
@@ -57,7 +60,9 @@ bool AI::TryToWinNow()
 
 								if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 									TryToPutMark(second_cell_x + offset_x, second_cell_y + offset_y))
-									return true; //our game winning mark
+								{
+									return true;
+								}
 							}
 							else if (_field[second_cell_x][second_cell_y] != PLAYER_MARK)
 							{
@@ -74,9 +79,10 @@ bool AI::TryToWinNow()
 								{
 									//if we have |x||_||x| situation
 									TryToPutMark(second_cell_x, second_cell_y);
-									return true; //our game winning mark
+									return true; 
 								}
 							}
+						}
 					}
 			}
 		}
@@ -84,7 +90,7 @@ bool AI::TryToWinNow()
 	return false;
 }
 
-bool AI::TryToInterruptOpponent()
+bool AI::TryToObstructOpponent()
 {
 	for (int i = 0; i < FIELD_SIDE; ++i)
 	{
@@ -92,14 +98,14 @@ bool AI::TryToInterruptOpponent()
 			if (_field[i][j] == PLAYER_MARK)
 			{
 				//here we check all cells (around)near current
-				for (int iterator_x = -1; iterator_x <= 1; ++iterator_x)
-					for (int iterator_y = -1; iterator_y <= 1; ++iterator_y)
+				for (int cell_near_x = -1; cell_near_x <= 1; ++cell_near_x)
+					for (int cell_near_y = -1; cell_near_y <= 1; ++cell_near_y)
 					{
-						if (!iterator_x && !iterator_y) //if it`s current cell
+						if (!cell_near_x && !cell_near_y) //if it`s current cell
 							continue;
 						//here we specify the position of sell near [i][j] cell
-						int second_cell_x = i + iterator_x;
-						int second_cell_y = j + iterator_y;
+						int second_cell_x = i + cell_near_x;
+						int second_cell_y = j + cell_near_y;
 						//next I check is cell I`m looking at out of bounds
 						if (IsCellInbound(second_cell_x, second_cell_y))
 							if (_field[second_cell_x][second_cell_y] == PLAYER_MARK)

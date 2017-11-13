@@ -1,4 +1,4 @@
-//play by pressing RightNumKeys
+//play by pressing qwe asd zxc buttons
 #define NUM_7 0,0
 #define NUM_8 0,1
 #define NUM_9 0,2
@@ -24,8 +24,10 @@ int Player_Turn(Field &field, char input, bool show_filed = true);
 
 void PutPlayerMark(Field &field, int x, int y)
 {
-	if (AI::IsCellInbound(x,y) && field[x][y] == 0)
+	if (AI::IsCellInbound(x, y) && field[x][y] == 0)
+	{
 		field[x][y] = PLAYER_MARK;
+	}
 	else
 	{
 		char input;
@@ -95,7 +97,9 @@ bool DrawField(const Field &field) //draws field to console, return "false" if t
 			case NULL:
 				ch = '_';
 				if (one_time--)
+				{
 					free_cells_exist = true;
+				}
 				break;
 			default:
 				std::cout << "ARRAY IS DAMAGED!!\n";
@@ -108,27 +112,27 @@ bool DrawField(const Field &field) //draws field to console, return "false" if t
 	return free_cells_exist;
 }
 
-int IsGameEnded(const Field &field) //return value: NULL - game still on, AI_MARK - AI won, PLAYER_MARK - player won
+bool IsGameEnded(const Field &field)
 {
 	int field_mark;
 	for (int i = 0; i < FIELD_SIDE; ++i)
 	{
 		for (int j = 0; j < FIELD_SIDE; ++j)
-			if (field[i][j] != NULL) //AI_MARK is AI symbol
+			if (field[i][j] != NULL) 
 			{
 				field_mark = field[i][j];
 				//here we check all cells (around)near current
-				for (int iterator_x = -1; iterator_x <= 1; ++iterator_x)
-					for (int iterator_y = -1; iterator_y <= 1; ++iterator_y)
+				for (int cell_near_x = -1; cell_near_x <= 1; ++cell_near_x)
+					for (int cell_near_y = -1; cell_near_y <= 1; ++cell_near_y)
 					{
-						if (!iterator_x && !iterator_y) //if it`s current cell
+						if (!cell_near_x && !cell_near_y) //if it`s current cell
 							continue;
 						//here we specify the position of sell near [i][j] cell
-						int second_cell_x = i + iterator_x;
-						int second_cell_y = j + iterator_y;
+						int second_cell_x = i + cell_near_x;
+						int second_cell_y = j + cell_near_y;
 
-						if (AI::IsCellInbound(second_cell_x, second_cell_y))
-							if (field[second_cell_x][second_cell_y] == field_mark) 
+						if (AI::IsCellInbound(second_cell_x, second_cell_y) &&
+							(field[second_cell_x][second_cell_y] == field_mark)) 
 							{												 
 								//if it`s true, we have too
 								//check next cell in a row after them
@@ -148,7 +152,7 @@ int IsGameEnded(const Field &field) //return value: NULL - game still on, AI_MAR
 	return NULL;
 }
 
-int AI_Turn(AI_Lvl1 &ai, Field &field)
+int AI_Turn(AI &ai, Field &field)
 {
 	ai.MakeATurn();  
 	if (IsGameEnded(field))
@@ -188,9 +192,9 @@ int main()
 {	
 	srand(time(NULL));
 
-	Field field(3, std::vector<int>(3, 0));
+	Field field(FIELD_SIDE, std::vector<int>(FIELD_SIDE, 0));
 
-	AI_Lvl1 ai(field);
+	AI_Lvl2 ai(field); //TODO: level selection
 	char input;
 	int hows_first = rand() % 2;
 	while (1)
