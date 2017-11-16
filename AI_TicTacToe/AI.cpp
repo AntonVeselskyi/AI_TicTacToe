@@ -1,6 +1,15 @@
 #include "AI.h"
 
 
+bool AI_Helper::IsCellInbound(int x, int y)
+{
+	if ((x <= 2) && (x >= 0) && (y <= 2) && (y >= 0))
+	{
+		return true;
+	}
+
+	return false;
+}
 
 AI::AI(Field &field) : _field(field){}
 
@@ -8,23 +17,13 @@ AI::AI(Field &field) : _field(field){}
 bool AI::TryToPutMark(int x, int y)
 {
 	//if cell inbound and  == 0, we can mark it
-	if (IsCellInbound(x,y) && _field[x][y] == 0) 
+	if (AI_Helper::IsCellInbound(x,y) && _field[x][y] == 0) 
 	{
 		_field[x][y] = AI_MARK;
 		_last_mark_x = x;
 		_last_mark_y = y;
 		return true;
 	}
-	return false;
-}
-
-bool AI::IsCellInbound(int x, int y)
-{
-	if ((x <= 2) && (x >= 0) && (y <= 2) && (y >= 0))
-	{
-		return true;
-	}
-
 	return false;
 }
 
@@ -47,7 +46,7 @@ bool AI::TryToWin()
 						int second_cell_x = i + cell_near_x;
 						int second_cell_y = j + cell_near_y;
 						//next I check is cell I`m looking at out of bounds
-						if (IsCellInbound(second_cell_x, second_cell_y))
+						if (AI_Helper::IsCellInbound(second_cell_x, second_cell_y))
 						{
 							if (_field[second_cell_x][second_cell_y] == AI_MARK)
 							{
@@ -58,7 +57,7 @@ bool AI::TryToWin()
 								int offset_x = second_cell_x - i;
 								int offset_y = second_cell_y - j;
 
-								if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+								if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 									TryToPutMark(second_cell_x + offset_x, second_cell_y + offset_y))
 								{
 									return true;
@@ -74,7 +73,7 @@ bool AI::TryToWin()
 								int offset_x = second_cell_x - i;
 								int offset_y = second_cell_y - j;
 
-								if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+								if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 									_field[second_cell_x + offset_x][second_cell_y + offset_y] == AI_MARK)
 								{
 									//if we have |x||_||x| situation
@@ -107,7 +106,7 @@ bool AI::TryToObstructOpponent()
 						int second_cell_x = i + cell_near_x;
 						int second_cell_y = j + cell_near_y;
 						//next I check is cell I`m looking at out of bounds
-						if (IsCellInbound(second_cell_x, second_cell_y))
+						if (AI_Helper::IsCellInbound(second_cell_x, second_cell_y))
 							if (_field[second_cell_x][second_cell_y] == PLAYER_MARK)
 							{
 								//if it`s true, we have too
@@ -119,7 +118,7 @@ bool AI::TryToObstructOpponent()
 
 								//check is cell after second_cell is free, if free --> put our mark there
 								//possible future opponent game winning mark
-								if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+								if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 									TryToPutMark(second_cell_x + offset_x, second_cell_y + offset_y))
 									return true;
 							}
@@ -134,7 +133,7 @@ bool AI::TryToObstructOpponent()
 								int offset_y = second_cell_y - j;
 
 								//possible future opponent game winning mark
-								if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+								if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 									_field[second_cell_x + offset_x][second_cell_y + offset_y] == PLAYER_MARK)
 									{
 										TryToPutMark(second_cell_x, second_cell_y);

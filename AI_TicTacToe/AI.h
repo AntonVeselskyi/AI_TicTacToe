@@ -6,6 +6,11 @@
 #define PLAYER_MARK	(1)
 typedef std::vector<std::vector<int> > Field;
 
+namespace AI_Helper
+{
+	bool IsCellInbound(int x, int y);
+}
+
 //AI --- will put an array with '2', when player will use '1'
 class AI
 {
@@ -13,7 +18,7 @@ public:
 	explicit AI(Field &field);
 	virtual ~AI() = default;
 	virtual void MakeATurn() = 0;
-	static bool IsCellInbound(int x, int y); //is Cell (x,y) belongs to field
+
 protected:
 	Field &_field; //3x3 array
 	int _turns_num = 0; //for now if it`s first turn (and for statistics)

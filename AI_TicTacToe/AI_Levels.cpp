@@ -31,11 +31,6 @@ void AI_Lvl1::MakeATurn()
 		return;
 	}
 
-	if (TryToObstructOpponent()) //if opponent has 2 in a row AI will obstruct
-	{
-		return;
-	}
-
 	MakeMyMark();
 }
 
@@ -68,7 +63,7 @@ void AI_Lvl2::MakeMyMark() //here AI will put a mark if there`s no threat of los
 			int second_cell_x = _last_mark_x + cell_near_x;
 			int second_cell_y = _last_mark_y + cell_near_y;
 			//next I check is cell I`m looking at out of bounds
-			if (IsCellInbound(second_cell_x, second_cell_y))
+			if (AI_Helper::IsCellInbound(second_cell_x, second_cell_y))
 				if (!_field[second_cell_x][second_cell_y])
 				{
 					//if it`s true, we have too
@@ -80,29 +75,29 @@ void AI_Lvl2::MakeMyMark() //here AI will put a mark if there`s no threat of los
 					int offset_y = second_cell_y - _last_mark_y;
 
 					//possible future opponent game winning mark
-					if (IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+					if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 						(!_field[second_cell_x + offset_x][second_cell_y + offset_y]))
-						{
-							//if cell after second is empty, we have opportunity to win in next turn
-							TryToPutMark(second_cell_x, second_cell_y);
-							return;
-						}
+					{
+						//if cell after second is empty, we have opportunity to win in next turn
+						TryToPutMark(second_cell_x, second_cell_y);
+						return;
+					}
 
 				}
 		}
 
 	//if there`s no place with two empty cells in a row near last cell --> AI just use one of free cells near
-	//THERE ARE ALWAYS A FREE CELL NEAR
+	//10 times AI trys to put a mark near last mark
 	int x, y;
+	int ten_times = 10;
 	srand(time(NULL));
 	do //find empty cell near
 	{
-		do
-		{
-			x = rand() % FIELD_SIDE;
-			y = rand() % FIELD_SIDE;
-			//codition in WHILE below checks is a random cell is near our cell
-		} while ((abs(_last_mark_x - x) == 2) || (abs(_last_mark_y - y) == 2));
+		x = rand() % FIELD_SIDE;
+		y = rand() % FIELD_SIDE;
+		//codition in IF below checks is a random cell is near our cell
+		if (((abs(_last_mark_x - x) == 2) || (abs(_last_mark_y - y) == 2)) && ten_times > 0)
+			continue;
 	} while (!TryToPutMark(x, y));
 }
 
@@ -122,6 +117,161 @@ void AI_Lvl2::MakeATurn()
 	if (TryToObstructOpponent()) //if opponent has 2 in a row AI will obstruct
 	{
 		return;
+	}
+
+	MakeMyMark();
+}
+
+			/*AI LEVEL 2*/
+//--------------------------------------------------------------------------------------------------
+AI_Lvl3::AI_Lvl3(Field & field):AI_Lvl2(field) {} 
+
+void AI_Lvl3::MakeMyMark()
+{
+	AI_Lvl2::MakeMyMark();
+}
+
+void AI_Lvl3::MakeFirstMark()
+{
+	if (!TryToPutMark(1, 1)) //try to put mark at the center
+	{
+		OccupyCornerCell();
+	}
+}
+
+bool AI_Lvl3::MakeSecondMark()
+{
+	if ( _field[1][1] == AI_MARK)
+	{
+		if (GetPlayerMarksNum() == 2)
+		{
+			if (IsAnyCornerCellMarked())
+			{
+				OccupySideCell();
+			}
+			else
+			{
+				PutMarkNearOpponentsMark();
+			}
+		}
+		else if (GetPlayerMarksNum() == 1)
+		{
+			OccupyCornerCell();
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+void AI_Lvl3::OccupyCornerCell()
+{
+	int x, y;
+	srand(time(NULL));
+	do 
+	{
+		x = rand() % FIELD_SIDE;
+		y = rand() % FIELD_SIDE;
+
+		//if not corner (x or y == 1) --> continue
+	} while ( ((x == 1) || (y == 1)) || !TryToPutMark(x, y));
+}
+
+void AI_Lvl3::OccupySideCell()
+{
+	int x, y;
+	srand(time(NULL));
+	do
+	{
+		x = rand() % FIELD_SIDE;
+		y = rand() % FIELD_SIDE;
+
+		//if not side --> continue
+	} while (!((x == 1 && y != 1) || (x != 1 && y == 1)) || !TryToPutMark(x, y));
+}
+
+void AI_Lvl3::PutMarkNearOpponentsMark()
+{
+	int opponent_mark_x;
+	int opponent_mark_y;
+
+	for (int i = 0; i < FIELD_SIDE; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE; ++j)
+		{
+			if (_field[i][j] == PLAYER_MARK)
+			{
+
+				opponent_mark_x = i;
+				opponent_mark_y = j;
+				if (TryToPutMark(i - 1, j))
+					return;
+				else if (TryToPutMark(i + 1, j))
+					return;
+				else if (TryToPutMark(i, j - 1))
+					return;
+				else if (TryToPutMark(i, j + 1))
+					return;
+
+			}
+		}
+	}
+}
+
+bool AI_Lvl3::IsAnyCornerCellMarked()
+{
+	if ((_field[0][0] == PLAYER_MARK) ||
+		(_field[0][2] == PLAYER_MARK) ||
+		(_field[2][0] == PLAYER_MARK) ||
+		(_field[2][2] == PLAYER_MARK))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int AI_Lvl3::GetPlayerMarksNum()
+{
+	int num = 0;
+	for (int i = 0; i < FIELD_SIDE; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE; ++j)
+		{
+			if (_field[i][j] == PLAYER_MARK)
+				++num;
+		}
+	}
+	return num;
+}
+
+void AI_Lvl3::MakeATurn()
+{
+	
+	_turns_num++;
+	if (_turns_num == 1)
+	{
+		MakeFirstMark(); //try to possess a center cell or corner cell
+		return;
+	}
+	
+	if (TryToWin()) //if AI can finish the game
+	{
+		return;
+	}
+
+	if (TryToObstructOpponent()) //if opponent has 2 in a row AI will obstruct
+	{
+		return;
+	}
+
+	if (_turns_num == 2)
+	{
+		if (MakeSecondMark()) //try to possess a corner cell or side cell
+			return;
 	}
 
 	MakeMyMark();

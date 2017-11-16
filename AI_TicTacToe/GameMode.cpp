@@ -1,32 +1,34 @@
 //play by pressing qwe asd zxc buttons
-#define NUM_7 0,0
-#define NUM_8 0,1
-#define NUM_9 0,2
-#define NUM_4 1,0
-#define NUM_5 1,1
-#define NUM_6 1,2
-#define NUM_1 2,0
-#define NUM_2 2,1
-#define NUM_3 2,2
-
 #define GAME_ENDED (1)
 #define GAME_CONTINUE (0)
 
 #include <iostream>
+#include <utility>
 #include <Windows.h>
 #include <cstdlib>
 #include <ctime>
 #include "AI_Levels.h"
 
+
+void PrintAsciLogo()
+{
+	std::cout <<
+		" _______ _          _______             _______         \n"
+		"|__   __(_)        |__   __|           |__   __|        \n"
+		"   | |   _  ___ ______| | __ _  ___ ______| | ___   ___ \n"
+		"   | |  | |/ __|______| |/ _` |/ __|______| |/ _ \\ / _ \\\n"
+		"   | |  | | (__       | | (_| | (__       | | (_) |  __/ \n"
+		"   |_|  |_|\\___|      |_|\\__,_|\\___|      |_|\\___/ \\___| \n";
+}
 //declaration Player_Turn needed, because there is scenario 
 //when PutPlayerMark() calls Player_Turn() and vice versa.
 int Player_Turn(Field &field, char input, bool show_filed = true);
 
-void PutPlayerMark(Field &field, int x, int y)
+void PutPlayerMark(Field &field, std::pair<int,int> point)
 {
-	if (AI::IsCellInbound(x, y) && field[x][y] == 0)
+	if (AI_Helper::IsCellInbound(point.first, point.second) && field[point.first][point.second] == 0)
 	{
-		field[x][y] = PLAYER_MARK;
+		field[point.first][point.second] = PLAYER_MARK;
 	}
 	else
 	{
@@ -42,31 +44,31 @@ void ImplementPlayerInput(char input, Field &field)
 	switch (input)
 	{
 	case 'z':
-		PutPlayerMark(field, NUM_1);
+		PutPlayerMark(field, std::pair<int, int>(2, 0));
 		break;
 	case 'x':
-		PutPlayerMark(field, NUM_2);
+		PutPlayerMark(field, std::pair<int, int>(2, 1));
 		break;
 	case 'c':
-		PutPlayerMark(field, NUM_3);
+		PutPlayerMark(field, std::pair<int, int>(2, 2));
 		break;
 	case 'a':
-		PutPlayerMark(field, NUM_4);
+		PutPlayerMark(field, std::pair<int, int>(1, 0));
 		break;
 	case 's':
-		PutPlayerMark(field, NUM_5);
+		PutPlayerMark(field, std::pair<int, int>(1, 1));
 		break;
 	case 'd':
-		PutPlayerMark(field, NUM_6);
+		PutPlayerMark(field, std::pair<int, int>(1, 2));
 		break;
 	case 'q':
-		PutPlayerMark(field, NUM_7);
+		PutPlayerMark(field, std::pair<int, int>(0, 0));
 		break;
 	case 'w':
-		PutPlayerMark(field, NUM_8);
+		PutPlayerMark(field, std::pair<int, int>(0, 1));
 		break;
 	case 'e':
-		PutPlayerMark(field, NUM_9);
+		PutPlayerMark(field, std::pair<int, int>(0, 2));
 		break;
 	default:
 		char input;
@@ -131,7 +133,7 @@ bool IsGameEnded(const Field &field)
 						int second_cell_x = i + cell_near_x;
 						int second_cell_y = j + cell_near_y;
 
-						if (AI::IsCellInbound(second_cell_x, second_cell_y) &&
+						if (AI_Helper::IsCellInbound(second_cell_x, second_cell_y) &&
 							(field[second_cell_x][second_cell_y] == field_mark)) 
 							{												 
 								//if it`s true, we have too
@@ -142,7 +144,7 @@ bool IsGameEnded(const Field &field)
 								int offset_y = second_cell_y - j;
 
 								//check is cell after second_cell is free, if free --> put our mark there 
-								if (AI::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y))
+								if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y))
 									if (field[second_cell_x + offset_x][second_cell_y + offset_y] == field_mark) //FAME WON
 										return field_mark;
 							}
@@ -187,41 +189,70 @@ int Player_Turn(Field &field, char input, bool show_field)
 	return GAME_CONTINUE;
 }
 
-
 int main()
-{	
+{
+	PrintAsciLogo();
 	srand(time(NULL));
-
-	Field field(FIELD_SIDE, std::vector<int>(FIELD_SIDE, 0));
-
-	AI_Lvl2 ai(field); //TODO: level selection
-	char input;
-	int hows_first = rand() % 2;
-	while (1)
+	int level_val;
+	bool game_on = true;
+	while (game_on)
 	{
-		if (hows_first)
+		Field field(FIELD_SIDE, std::vector<int>(FIELD_SIDE, 0));
+
+		do
 		{
-			if (AI_Turn(ai, field) == GAME_ENDED)
-				break;
-			Sleep(1000);
-			std::cin >> input;
-			if (Player_Turn(field, input) == GAME_ENDED)
-				break;
+			std::cout << "Please enter level of difficulty (1, 2, 3): ";
+			std::cin >> level_val;
+		} while (level_val > 3 || level_val < 1);
+
+			AI *ai = NULL;
+
+		switch (level_val)
+		{
+		case 1:
+			ai = new AI_Lvl1(field);
+			break;
+		case 2:
+			ai = new AI_Lvl2(field);
+			break;
+		case 3:
+			ai = new AI_Lvl3(field);
+			break;
 		}
-		else
+		char input;
+		int hows_first = rand() % 2;
+		while (1)
 		{
-			std::cout << "\n YOUR TURN \n";
-			DrawField(field);
-			std::cin >> input;
-			if (Player_Turn(field, input) == GAME_ENDED)
-				break;
-			Sleep(1000);
-			if (AI_Turn(ai, field) == GAME_ENDED)
-				break;
+			if (hows_first)
+			{
+				if (AI_Turn(*ai, field) == GAME_ENDED)
+					break;
+				Sleep(1000);
+				std::cin >> input;
+				if (Player_Turn(field, input) == GAME_ENDED)
+					break;
+			}
+			else
+			{
+				std::cout << "\n YOUR TURN \n";
+				DrawField(field);
+				std::cin >> input;
+				if (Player_Turn(field, input) == GAME_ENDED)
+					break;
+				Sleep(1000);
+				if (AI_Turn(*ai, field) == GAME_ENDED)
+					break;
+			}
+		}
+
+		char go_on;
+		std::cout << "Play again? [y/n]: ";
+		std::cin >> go_on;
+		if (go_on != 'y')
+		{
+			game_on = false;
 		}
 	}
-	Sleep(10000);
-
 	return 0;
 
 }
