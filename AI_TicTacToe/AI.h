@@ -1,5 +1,7 @@
 #pragma once
 
+#define DllExport   __declspec( dllexport )
+
 #include <vector>
 #define FIELD_SIDE (3)
 #define AI_MARK	(2)
@@ -12,7 +14,7 @@ namespace AI_Helper
 }
 
 //AI --- will put an array with '2', when player will use '1'
-class AI
+class DllExport AI
 {
 public:
 	explicit AI(Field &field);

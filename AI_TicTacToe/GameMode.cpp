@@ -3,11 +3,7 @@
 #define GAME_CONTINUE (0)
 
 #include <iostream>
-#include <utility>
-#include <Windows.h>
-#include <cstdlib>
-#include <ctime>
-#include "AI_Levels.h"
+#include "GameMode.h"
 
 
 void PrintAsciLogo()
@@ -20,9 +16,6 @@ void PrintAsciLogo()
 		"   | |  | | (__       | | (_| | (__       | | (_) |  __/ \n"
 		"   |_|  |_|\\___|      |_|\\__,_|\\___|      |_|\\___/ \\___| \n";
 }
-//declaration Player_Turn needed, because there is scenario 
-//when PutPlayerMark() calls Player_Turn() and vice versa.
-int Player_Turn(Field &field, char input, bool show_filed = true);
 
 void PutPlayerMark(Field &field, std::pair<int,int> point)
 {

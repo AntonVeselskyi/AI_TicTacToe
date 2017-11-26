@@ -2,7 +2,7 @@
 
 #include "AI.h"
 
-class AI_Lvl1 : public AI
+class DllExport AI_Lvl1 : public AI
 {
 public:
 	explicit AI_Lvl1(Field &field);
@@ -15,7 +15,7 @@ private:
 
 
 
-class AI_Lvl2 : public AI
+class DllExport AI_Lvl2 : public AI
 {
 public:
 	explicit AI_Lvl2(Field &field);
@@ -28,7 +28,7 @@ private:
 	virtual void MakeFirstMark() override;
 };
 
-class AI_Lvl3 : public AI_Lvl2
+class DllExport AI_Lvl3 : public AI_Lvl2
 {
 public:
 	explicit AI_Lvl3(Field &field);
