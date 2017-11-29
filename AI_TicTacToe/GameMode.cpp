@@ -5,6 +5,8 @@
 #include <iostream>
 #include "GameMode.h"
 
+using namespace AI_TicTacToe;
+
 
 void PrintAsciLogo()
 {
@@ -17,7 +19,7 @@ void PrintAsciLogo()
 		"   |_|  |_|\\___|      |_|\\__,_|\\___|      |_|\\___/ \\___| \n";
 }
 
-void PutPlayerMark(Field &field, std::pair<int,int> point)
+void AI_TicTacToe::PutPlayerMark(Field &field, std::pair<int,int> point)
 {
 	if (AI_Helper::IsCellInbound(point.first, point.second) && field[point.first][point.second] == 0)
 	{
@@ -32,7 +34,7 @@ void PutPlayerMark(Field &field, std::pair<int,int> point)
 	}
 }
 
-void ImplementPlayerInput(char input, Field &field)
+void AI_TicTacToe::ImplementPlayerInput(char input, Field &field)
 {
 	switch (input)
 	{
@@ -72,7 +74,7 @@ void ImplementPlayerInput(char input, Field &field)
 	}
 }
 
-bool DrawField(const Field &field) //draws field to console, return "false" if there no free space on a field
+static bool DrawField(const Field &field) //draws field to console, return "false" if there no free space on a field
 {
 	bool free_cells_exist = false;
 	int one_time = 1;
@@ -107,7 +109,7 @@ bool DrawField(const Field &field) //draws field to console, return "false" if t
 	return free_cells_exist;
 }
 
-bool IsGameEnded(const Field &field)
+bool AI_TicTacToe::IsGameEnded(const Field &field)
 {
 	int field_mark;
 	for (int i = 0; i < FIELD_SIDE; ++i)
@@ -147,7 +149,20 @@ bool IsGameEnded(const Field &field)
 	return NULL;
 }
 
-int AI_Turn(AI &ai, Field &field)
+std::pair<int, int> AI_TicTacToe::FieldsDiff(const Field & a, const Field & b)
+{
+	for (int i = 0; i < FIELD_SIDE; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE; ++j)
+		{
+			if(a[i][j] != b[i][j])
+				return std::pair<int, int>(i, j);
+		}
+	}
+	return std::pair<int, int>(-1,-1);
+}
+
+int AI_TicTacToe::AI_Turn(AI &ai, Field &field)
 {
 	ai.MakeATurn();  
 	if (IsGameEnded(field))
@@ -164,7 +179,7 @@ int AI_Turn(AI &ai, Field &field)
 	return GAME_CONTINUE;
 }
 
-int Player_Turn(Field &field, char input, bool show_field)
+int AI_TicTacToe::Player_Turn(Field &field, char input, bool show_field)
 {
 	ImplementPlayerInput(input, field);
 

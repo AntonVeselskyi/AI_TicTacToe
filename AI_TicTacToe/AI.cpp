@@ -1,5 +1,6 @@
 #include "AI.h"
 
+using namespace AI_TicTacToe;
 
 bool AI_Helper::IsCellInbound(int x, int y)
 {

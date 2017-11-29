@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 
+using namespace AI_TicTacToe;
 //IMPORTANT: PLAYER_MARK(1) is not NULL, it`s name of mark that player puts
 //AI_MARK(2) is a name of mark that AI puts (see AI.h for defines)
 
