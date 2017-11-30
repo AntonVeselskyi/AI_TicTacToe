@@ -1,6 +1,7 @@
 //play by pressing qwe asd zxc buttons
 #define GAME_ENDED (1)
 #define GAME_CONTINUE (0)
+#define WRONG_INPUT (-1)
 
 #include <iostream>
 #include "GameMode.h"
@@ -19,59 +20,56 @@ void PrintAsciLogo()
 		"   |_|  |_|\\___|      |_|\\__,_|\\___|      |_|\\___/ \\___| \n";
 }
 
-void AI_TicTacToe::PutPlayerMark(Field &field, std::pair<int,int> point)
+bool AI_TicTacToe::PutPlayerMark(Field &field, std::pair<int,int> point)
 {
 	if (AI_Helper::IsCellInbound(point.first, point.second) && field[point.first][point.second] == 0)
 	{
 		field[point.first][point.second] = PLAYER_MARK;
+		return true;
 	}
 	else
 	{
-		char input;
-		std::cout << "WRONG INPUT, TRY AGAIN \n";
-		std::cin >> input;
-		Player_Turn(field, input, false);
+		return false;
 	}
 }
 
-void AI_TicTacToe::ImplementPlayerInput(char input, Field &field)
+bool AI_TicTacToe::ImplementPlayerInput(char input, Field &field)
 {
 	switch (input)
 	{
 	case 'z':
-		PutPlayerMark(field, std::pair<int, int>(2, 0));
+		return PutPlayerMark(field, std::pair<int, int>(2, 0));
 		break;
 	case 'x':
-		PutPlayerMark(field, std::pair<int, int>(2, 1));
+		return PutPlayerMark(field, std::pair<int, int>(2, 1));
 		break;
 	case 'c':
-		PutPlayerMark(field, std::pair<int, int>(2, 2));
+		return PutPlayerMark(field, std::pair<int, int>(2, 2));
 		break;
 	case 'a':
-		PutPlayerMark(field, std::pair<int, int>(1, 0));
+		return PutPlayerMark(field, std::pair<int, int>(1, 0));
 		break;
 	case 's':
-		PutPlayerMark(field, std::pair<int, int>(1, 1));
+		return PutPlayerMark(field, std::pair<int, int>(1, 1));
 		break;
 	case 'd':
-		PutPlayerMark(field, std::pair<int, int>(1, 2));
+		return PutPlayerMark(field, std::pair<int, int>(1, 2));
 		break;
 	case 'q':
-		PutPlayerMark(field, std::pair<int, int>(0, 0));
+		return PutPlayerMark(field, std::pair<int, int>(0, 0));
 		break;
 	case 'w':
-		PutPlayerMark(field, std::pair<int, int>(0, 1));
+		return PutPlayerMark(field, std::pair<int, int>(0, 1));
 		break;
 	case 'e':
-		PutPlayerMark(field, std::pair<int, int>(0, 2));
+		return PutPlayerMark(field, std::pair<int, int>(0, 2));
 		break;
 	default:
-		char input;
-		std::cout << "WRONG INPUT, TRY AGAIN \n";
-		std::cin >> input;
-		Player_Turn(field, input, false);
+		return false;
 		break;
 	}
+
+	return true;
 }
 
 static bool DrawField(const Field &field) //draws field to console, return "false" if there no free space on a field
@@ -181,8 +179,12 @@ int AI_TicTacToe::AI_Turn(AI &ai, Field &field)
 
 int AI_TicTacToe::Player_Turn(Field &field, char input, bool show_field)
 {
-	ImplementPlayerInput(input, field);
-
+	bool is_implemented = ImplementPlayerInput(input, field);
+	if (!is_implemented)
+	{
+		std::cout << "\n !!! WRONG_INPUT!!! \n";
+		return WRONG_INPUT;
+	}
 	if (IsGameEnded(field))
 	{
 		std::cout << "\n !!! PLAYER WON !!! \n";
@@ -213,7 +215,7 @@ int main()
 			std::cin >> level_val;
 		} while (level_val > 3 || level_val < 1);
 
-			AI *ai = NULL;
+		AI *ai = NULL;
 
 		switch (level_val)
 		{
@@ -235,18 +237,32 @@ int main()
 			{
 				if (AI_Turn(*ai, field) == GAME_ENDED)
 					break;
-				Sleep(1000);
-				std::cin >> input;
-				if (Player_Turn(field, input) == GAME_ENDED)
+
+				int p_res = WRONG_INPUT;
+				std::cout << "\n YOUR TURN \n";
+				while (p_res == WRONG_INPUT)
+				{
+					std::cin >> input;
+					p_res = Player_Turn(field, input);
+				}
+				if (p_res == GAME_ENDED)
 					break;
+
+				Sleep(1000);
 			}
 			else
 			{
+				int p_res = WRONG_INPUT;
 				std::cout << "\n YOUR TURN \n";
 				DrawField(field);
-				std::cin >> input;
-				if (Player_Turn(field, input) == GAME_ENDED)
+				while (p_res == WRONG_INPUT)
+				{
+					std::cin >> input;
+					p_res = Player_Turn(field, input);
+				}
+				if (p_res == GAME_ENDED)
 					break;
+
 				Sleep(1000);
 				if (AI_Turn(*ai, field) == GAME_ENDED)
 					break;

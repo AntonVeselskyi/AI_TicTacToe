@@ -75,7 +75,7 @@ void AI_Lvl2::MakeMyMark() //here AI will put a mark if there`s no threat of los
 					int offset_x = second_cell_x - _last_mark_x;
 					int offset_y = second_cell_y - _last_mark_y;
 
-					//possible future opponent game winning mark
+					//possible AI future game winning mark
 					if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
 						(!_field[second_cell_x + offset_x][second_cell_y + offset_y]))
 					{
@@ -147,11 +147,11 @@ bool AI_Lvl3::MakeSecondMark()
 		if (GetPlayerMarksNum() == 2)
 		{
 			if (IsAnyCornerCellMarked())
-			{
+			{ //A1 SOLUTION
 				OccupySideCell();
 			}
 			else
-			{
+			{ //A2 SOLUTION
 				PutMarkNearOpponentsMark();
 			}
 		}
@@ -162,6 +162,41 @@ bool AI_Lvl3::MakeSecondMark()
 
 		return true;
 	}
+	else
+	{	//B1 SOLUTION
+		for (int cell_near_x = -1; cell_near_x <= 1; ++cell_near_x)
+			for (int cell_near_y = -1; cell_near_y <= 1; ++cell_near_y)
+			{
+				if (!cell_near_x && !cell_near_y) //if it`s a last cell
+					continue;
+				//here we specify the position of sell near last marked cell
+				int second_cell_x = _last_mark_x + cell_near_x;
+				int second_cell_y = _last_mark_y + cell_near_y;
+				//next I check is cell I`m looking at out of bounds
+				if (AI_Helper::IsCellInbound(second_cell_x, second_cell_y))
+					if (!_field[second_cell_x][second_cell_y])
+					{
+						//if it`s true, we have too
+						//check next cell in a row after _field[second_cell_x][second_cell_y]
+						//in order to put mark there (it`s can be b1 situation)
+
+						//first we find a offset vector
+						int offset_x = second_cell_x - _last_mark_x;
+						int offset_y = second_cell_y - _last_mark_y;
+
+						//possible AI future game winning mark
+						if (AI_Helper::IsCellInbound(second_cell_x + offset_x, second_cell_y + offset_y) &&
+							(!_field[second_cell_x + offset_x][second_cell_y + offset_y]))
+						{
+							//if cell after second is empty, we have opportunity to win in next turn
+							TryToPutMark(second_cell_x + offset_x, second_cell_y + offset_y);
+							return true;
+						}
+
+					}
+			}
+	}
+	
 
 	return false;
 }

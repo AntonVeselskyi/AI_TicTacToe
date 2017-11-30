@@ -30,21 +30,27 @@
  if we own the center cell there already can be:
  a) 2 opponent marks on the field
  b) 1 opponent marks on the field
- in b situation we dominate, in a situation we need to consider this two situations :
+ in b situation we dominate (have to consider b1 situation), in a situation we need to consider this two situations :
 
 (O - AI, X - Player)
 
-1)
+a1)
 | _ | _ | _ |               | **X** | _ | _ |           | **X** | _ | **X** |
 |---|---|---|            ---|---|---|---|            ---|---|---|---|
 | _ | **O** | _ |  -------> | _ | **O** | _ | ------->  | _ | **O** | _ |
 | _ | _ | **X** |           | **O** | _ | **X** |       | **O** | _ | **X** |
 
-2)
+a2)
 | _ | _ | _ |               | _ | _ | **O** |                | _ | _ | **O** | 
 |---|---|---|            ---|---|---|---|                 ---|---|---|---|  
 | _ | **O** | _ |  -------> |  **X** | **O** | _ | ------->  |  **X** | **O** | _ |
-| _ | **X** | _ |           | _ | **X** | _ |                | **X** | **X** | **O** | 
+| _ | **X** | _ |           | _ | **X** | _ |                | **X** | **X** | **O** |
+
+b1)
+| _ | _ | _ |               | **X** | _ | _ |                | **X** | _ | **X** | 
+|---|---|---|            ---|---|---|---|                 ---|---|---|---|  
+| _ | **X** | _ |  -------> | _ | **X** | **O** | ------->  | _ | **X** | **O** |
+| _ | _ | **O** |           | _ | _ | **O** |                | _ | _ | **O** |
 
  All this situations are considered in MakeSecondMark() function!
 
