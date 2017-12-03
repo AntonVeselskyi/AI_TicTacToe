@@ -1,4 +1,7 @@
 #pragma once
+#define GAME_ENDED (1)
+#define GAME_CONTINUE (0)
+#define WRONG_INPUT (-1)
 
 #include "AI_Levels.h"
 #include <utility>
