@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<resources>
+	<set path = "images" />
+	<atlas>
+		<image id="bg" file="bg.jpg"/>
+		<image id="coin" file="coin.png" />
+		<image id="skull" file="skull.png" />
+	</atlas>
+  <set path = "fonts" />
+  <font file="main.fnt" />
+</resources>

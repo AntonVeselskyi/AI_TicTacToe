@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="flow">
+      <UniqueIdentifier>{c887d8e0-1fc7-41eb-99e1-e53d7921e9c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI_TicTacToe">
+      <UniqueIdentifier>{1ee82e2b-c01e-4d4c-9a6a-6d5012143309}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\res.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\flow\flow.cpp">
+      <Filter>flow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\flow\Scene.cpp">
+      <Filter>flow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\flow\Transition.cpp">
+      <Filter>flow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AI_TicTacToe\AI.cpp">
+      <Filter>AI_TicTacToe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AI_TicTacToe\AI_Levels.cpp">
+      <Filter>AI_TicTacToe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AI_TicTacToe\GameMode.cpp">
+      <Filter>AI_TicTacToe</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\res.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oxygine-flow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\flow\flow.h">
+      <Filter>flow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\flow\Scene.h">
+      <Filter>flow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\flow\Transition.h">
+      <Filter>flow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AI_TicTacToe\AI.h">
+      <Filter>AI_TicTacToe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AI_TicTacToe\AI_Levels.h">
+      <Filter>AI_TicTacToe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AI_TicTacToe\GameMode.h">
+      <Filter>AI_TicTacToe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\data\xmls\ui.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

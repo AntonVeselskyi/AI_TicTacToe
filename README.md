@@ -1,5 +1,8 @@
 # AI for TicTacToe :game_die:
 
+### AI_TicTacToe        - Console demonstration of AI 
+### Oxygine_TicTacToe   - 2D TicTacToe game build in Oxygine Game Engine
+
 ## Level 1
 - AI puts it`s marks randomly.
 
