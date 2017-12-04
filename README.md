@@ -2,6 +2,10 @@
 
 ### AI_TicTacToe        - Console demonstration of AI 
 ### Oxygine_TicTacToe   - 2D TicTacToe game build in Oxygine Game Engine
+###  :warning: In order to play --> Run *TicTacToe.exe* in *Oxygine_TicTacToe/data/* :warning:
+
+###  :warning: If you whant to build project by yourself, 
+### you need to have *oxygine-framework* source code :warning:
 
 ## Level 1
 - AI puts it`s marks randomly.
